@@ -1,0 +1,93 @@
+CREATE SCHEMA IF NOT EXISTS `eaccounts_test` DEFAULT CHARACTER SET utf8 ;
+USE `eaccounts_test` ;
+
+DROP TABLE IF EXISTS accounts ;
+DROP TABLE IF EXISTS contracts ;
+DROP TABLE IF EXISTS companies ;
+DROP TABLE IF EXISTS clients ;
+
+-- clients: table
+CREATE TABLE `clients` (
+  `id`           INT(11)     NOT NULL AUTO_INCREMENT,
+  `personalCode` VARCHAR(25) NOT NULL,
+  `name`         VARCHAR(50) NOT NULL,
+  `address`      VARCHAR(100)         DEFAULT NULL,
+  `eMail`        VARCHAR(50) NOT NULL,
+  `addUserId`    INT(11)              DEFAULT NULL,
+  `addDate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `chgUserId`    INT(11)              DEFAULT NULL,
+  `chgDate`      DATETIME             DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `clients_personalCode_uindex` (`personalCode`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  AUTO_INCREMENT = 1;
+
+-- companies: table
+CREATE TABLE `companies` (
+  `id`               INT(11)      NOT NULL AUTO_INCREMENT,
+  `regNr`            VARCHAR(25)  NOT NULL,
+  `name`             VARCHAR(50)  NOT NULL,
+  `address`          VARCHAR(100)          DEFAULT NULL,
+  `eMail`            VARCHAR(50)  NOT NULL,
+  `pathFromAccounts` VARCHAR(100) NOT NULL,
+  `pathToAccounts`   VARCHAR(100) NOT NULL,
+  `addUserId`    INT(11)              DEFAULT NULL,
+  `addDate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `chgUserId`    INT(11)              DEFAULT NULL,
+  `chgDate`      DATETIME             DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `companies_regNr_uindex` (`regNr`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  AUTO_INCREMENT = 1;
+
+-- contracts: table
+CREATE TABLE `contracts` (
+  `id`                      INT(11)     NOT NULL AUTO_INCREMENT,
+  `companyId`               INT(11)     NOT NULL,
+  `clientId`                INT(11)     NOT NULL,
+  `number`                  VARCHAR(20) NOT NULL,
+  `dateSign`                DATE        NOT NULL,
+  `dateBegin`               DATE        NOT NULL,
+  `dateEnd`                 DATE                 DEFAULT NULL,
+  `dayToSendAccount`        INT(11)     NOT NULL DEFAULT '10',
+  `countDaysToSendReminder` INT(11)     NOT NULL DEFAULT '10',
+  `status`                  INT(11)     NOT NULL DEFAULT '0'
+  COMMENT '0 - current, 1 - closed',
+  `addUserId`    INT(11)              DEFAULT NULL,
+  `addDate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `chgUserId`    INT(11)              DEFAULT NULL,
+  `chgDate`      DATETIME             DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `contracts_companyId_clientId_uindex` (`companyId`, `clientId`),
+  KEY `contracts_companies_id_fk` (`companyId`),
+  KEY `contracts_clients_id_fk` (`clientId`),
+  CONSTRAINT `contracts_clients_id_fk` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`),
+  CONSTRAINT `contracts_companies_id_fk` FOREIGN KEY (`companyId`) REFERENCES `companies` (`id`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  AUTO_INCREMENT = 1;
+
+-- accounts: table
+CREATE TABLE `accounts` (
+  `id`                  INT(11)     NOT NULL AUTO_INCREMENT,
+  `contractId`          INT(11)     NOT NULL,
+  `fileName`            VARCHAR(25) NOT NULL,
+  `dateSending`         DATE                 DEFAULT NULL,
+  `dateViewing`         DATE                 DEFAULT NULL,
+  `dateReminderSending` DATE                 DEFAULT NULL,
+  `addUserId`    INT(11)              DEFAULT NULL,
+  `addDate`      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `chgUserId`    INT(11)              DEFAULT NULL,
+  `chgDate`      DATETIME             DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `accounts_contracts_id_fk` (`contractId`),
+  CONSTRAINT `accounts_contracts_id_fk` FOREIGN KEY (`contractId`) REFERENCES `contracts` (`id`)
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8
+  AUTO_INCREMENT = 1;
