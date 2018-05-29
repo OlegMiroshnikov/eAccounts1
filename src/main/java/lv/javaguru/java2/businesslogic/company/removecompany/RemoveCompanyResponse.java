@@ -5,6 +5,7 @@ import lv.javaguru.java2.validators.Error;
 import java.util.List;
 
 public class RemoveCompanyResponse {
+
     private boolean success;
     private List<Error> errors;
 

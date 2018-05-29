@@ -1,37 +1,45 @@
 package lv.javaguru.java2.businesslogic.account.removeaccount;
 
-import lv.javaguru.java2.dao.AccountDaoInterface;
-import lv.javaguru.java2.domens.Account;
+import lv.javaguru.java2.dao.AccountDao;
 import lv.javaguru.java2.validators.Error;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveAccountServiceTest {
-    private AccountDaoInterface database;
+
+    @Mock
+    private AccountDao accountDao;
+
+    @Mock
     private RemoveAccountValidator validator;
+
+    @InjectMocks
     private RemoveAccountService service;
-    private Account account;
+
+    private RemoveAccountRequest request;
 
     @Before
     public void init() {
-        database = Mockito.mock(AccountDaoInterface.class);
-        validator = Mockito.mock(RemoveAccountValidator.class);
-        service = new RemoveAccountService(database, validator);
-        account = new Account(1L, 1, "fileName");
+        request = new RemoveAccountRequest(1L);
     }
 
     @Test
     public void removeAccount_noErrors_success() {
         List<Error> errors = new ArrayList<>();
-        Mockito.when(validator.validate(account))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveAccountResponse response = service.removeAccount(account);
+        RemoveAccountResponse response = service.removeAccount(request);
         assertTrue(response.isSuccess());
         assertEquals(response.getErrors(), null);
     }
@@ -40,9 +48,9 @@ public class RemoveAccountServiceTest {
     public void removeAccount_areErrors_fail() {
         List<Error> errors = new ArrayList<>();
         errors.add(new Error("id", "Must not be null"));
-        Mockito.when(validator.validate(account))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveAccountResponse response = service.removeAccount(account);
+        RemoveAccountResponse response = service.removeAccount(request);
         assertFalse(response.isSuccess());
         assertEquals(response.getErrors(), errors);
     }

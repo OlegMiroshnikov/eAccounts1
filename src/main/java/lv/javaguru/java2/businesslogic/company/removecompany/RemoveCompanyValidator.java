@@ -1,8 +1,11 @@
 package lv.javaguru.java2.businesslogic.company.removecompany;
 
-import lv.javaguru.java2.dao.CompanyDaoInterface;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.dao.CompanyDao;
+import lv.javaguru.java2.dao.ContractDao;
+import lv.javaguru.java2.domain.Company;
+import lv.javaguru.java2.domain.Contract;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,16 +15,17 @@ import java.util.Optional;
 @Component
 public class RemoveCompanyValidator {
 
-    private CompanyDaoInterface companyDaoImpl;
+    @Autowired
+    private CompanyDao companyDao;
 
-    public RemoveCompanyValidator(CompanyDaoInterface database) {
-        this.companyDaoImpl = database;
-    }
+    @Autowired
+    private ContractDao contractDao;
 
-    public List<Error> validate(Company company) {
+    public List<Error> validate(RemoveCompanyRequest request) {
         List<Error> errors = new ArrayList<>();
-        validateId(company.getId()).ifPresent(errors::add);
-        validateIsExistCompanyById(company.getId()).ifPresent(errors::add);
+        validateId(request.getId()).ifPresent(errors::add);
+        validateIsExistCompanyById(request.getId()).ifPresent(errors::add);
+        validateIsExistAnyContractByCompanyId(request.getId()).ifPresent(errors::add);
         return errors;
     }
 
@@ -35,7 +39,7 @@ public class RemoveCompanyValidator {
 
     private Optional<Error> validateIsExistCompanyById(Integer id) {
         if (id != null) {
-            Optional<Company> foundCompany = companyDaoImpl.getCompanyById(id);
+            Optional<Company> foundCompany = companyDao.getCompanyById(id);
             if (!foundCompany.isPresent()) {
                 return Optional.of(new Error("id", "Company by id not exist"));
             }
@@ -43,4 +47,13 @@ public class RemoveCompanyValidator {
         return Optional.empty();
     }
 
+    private Optional<Error> validateIsExistAnyContractByCompanyId(Integer id) {
+        if (id != null) {
+            List<Contract> contracts = contractDao.getContractListByCompanyId(id);
+            if (contracts.size() != 0) {
+                return Optional.of(new Error("id", "There are also contracts with this company"));
+            }
+        }
+        return Optional.empty();
+    }
 }

@@ -28,11 +28,11 @@ public class EAccountsApplication {
         ApplicationContext applicationContext
                 = new AnnotationConfigApplicationContext(SpringAppConfig.class);
 
-//        ClientDaoInterface clientDatabase = new ClientDaoMemoryDatabaseImpl();
-//        ClientDaoInterface clientDatabase = new ClientDaoJDBCImpl();
-//        CompanyDaoInterface companyDatabase = new CompanyDaoMemoryDatabaseImpl();
-//        ContractDaoInterface contractDatabase = new ContractDaoMemoryDatabaseImpl();
-//        AccountDaoInterface accountDatabase = new AccountDaoMemoryDatabaseImpl();
+//        ClientDao clientDatabase = new ClientDaoMemoryDatabaseImpl();
+//        ClientDao clientDatabase = new ClientDaoJDBCImpl();
+//        CompanyDao companyDatabase = new CompanyDaoMemoryDatabaseImpl();
+//        ContractDao contractDatabase = new ContractDaoMemoryDatabaseImpl();
+//        AccountDao accountDatabase = new AccountDaoMemoryDatabaseImpl();
 
 //        View addCompanyView = new AddCompanyView(companyDatabase);
 //        View removeCompanyView = new RemoveCompanyView(companyDatabase);

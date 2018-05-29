@@ -1,29 +1,31 @@
 package lv.javaguru.java2.businesslogic.account.removeaccount;
 
-import lv.javaguru.java2.dao.AccountDaoInterface;
-import lv.javaguru.java2.domens.Account;
+import lv.javaguru.java2.dao.AccountDao;
+import lv.javaguru.java2.domain.Account;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static lv.javaguru.java2.domain.builders.AccountBuilder.createAccount;
 
 @Component
 public class RemoveAccountService {
 
-    private AccountDaoInterface accountDaoImpl;
+    @Autowired
+    private AccountDao accountDao;
+    @Autowired
     private RemoveAccountValidator removeAccountValidator;
 
-    public RemoveAccountService(AccountDaoInterface database, RemoveAccountValidator removeAccountValidator) {
-        this.accountDaoImpl = database;
-        this.removeAccountValidator = removeAccountValidator;
-    }
-
-    public RemoveAccountResponse removeAccount(Account account) {
-        List<Error> errors = removeAccountValidator.validate(account);
+    @Transactional
+    public RemoveAccountResponse removeAccount(RemoveAccountRequest request) {
+        List<Error> errors = removeAccountValidator.validate(request);
         if (!errors.isEmpty()) {
             return new RemoveAccountResponse(false, errors);
         }
-        accountDaoImpl.removeAccount(account);
+        accountDao.removeAccount(request.getId());
         return new RemoveAccountResponse(true, null);
     }
 }

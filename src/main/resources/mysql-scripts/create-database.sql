@@ -65,8 +65,8 @@ CREATE TABLE `contracts` (
   UNIQUE KEY `contracts_companyId_clientId_uindex` (`companyId`, `clientId`),
   KEY `contracts_companies_id_fk` (`companyId`),
   KEY `contracts_clients_id_fk` (`clientId`),
-  CONSTRAINT `contracts_clients_id_fk` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`),
-  CONSTRAINT `contracts_companies_id_fk` FOREIGN KEY (`companyId`) REFERENCES `companies` (`id`)
+  CONSTRAINT `contracts_clients_id_fk` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `contracts_companies_id_fk` FOREIGN KEY (`companyId`) REFERENCES `companies` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8
@@ -74,7 +74,7 @@ CREATE TABLE `contracts` (
 
 -- accounts: table
 CREATE TABLE `accounts` (
-  `id`                  INT(11)     NOT NULL AUTO_INCREMENT,
+  `id`                  BIGINT(11)  NOT NULL AUTO_INCREMENT,
   `contractId`          INT(11)     NOT NULL,
   `fileName`            VARCHAR(25) NOT NULL,
   `dateSending`         DATE                 DEFAULT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `accounts` (
   `chgDate`      DATETIME             DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `accounts_contracts_id_fk` (`contractId`),
-  CONSTRAINT `accounts_contracts_id_fk` FOREIGN KEY (`contractId`) REFERENCES `contracts` (`id`)
+  CONSTRAINT `accounts_contracts_id_fk` FOREIGN KEY (`contractId`) REFERENCES `contracts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8

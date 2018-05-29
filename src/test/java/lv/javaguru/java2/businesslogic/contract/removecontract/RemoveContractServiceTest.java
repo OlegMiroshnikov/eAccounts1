@@ -1,39 +1,45 @@
 package lv.javaguru.java2.businesslogic.contract.removecontract;
 
-import lv.javaguru.java2.dao.ContractDaoInterface;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.dao.ContractDao;
 import lv.javaguru.java2.validators.Error;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveContractServiceTest {
-    private ContractDaoInterface database;
+
+    @Mock
+    private ContractDao contractDao;
+
+    @Mock
     private RemoveContractValidator validator;
+
+    @InjectMocks
     private RemoveContractService service;
-    private Contract contract;
+
+    private RemoveContractRequest request;
 
     @Before
     public void init() {
-        database = Mockito.mock(ContractDaoInterface.class);
-        validator = Mockito.mock(RemoveContractValidator.class);
-        service = new RemoveContractService(database, validator);
-        contract = new Contract (1, 1, 1, "number", LocalDate.now(), LocalDate.now(), LocalDate.now(),
-                1, 10, 0);
+        request = new RemoveContractRequest(1);
     }
 
     @Test
     public void removeContract_noErrors_success() {
         List<Error> errors = new ArrayList<>();
-        Mockito.when(validator.validate(contract))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveContractResponse response = service.removeContract(contract);
+        RemoveContractResponse response = service.removeContract(request);
         assertTrue(response.isSuccess());
         assertEquals(response.getErrors(), null);
     }
@@ -42,9 +48,9 @@ public class RemoveContractServiceTest {
     public void removeContract_areErrors_fail() {
         List<Error> errors = new ArrayList<>();
         errors.add(new Error("companyId", "Must not be null"));
-        Mockito.when(validator.validate(contract))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveContractResponse response = service.removeContract(contract);
+        RemoveContractResponse response = service.removeContract(request);
         assertFalse(response.isSuccess());
         assertEquals(response.getErrors(), errors);
     }

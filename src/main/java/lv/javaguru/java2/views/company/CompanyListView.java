@@ -1,7 +1,7 @@
 package lv.javaguru.java2.views.company;
 
 import lv.javaguru.java2.businesslogic.company.getcompanylist.GetCompanyListService;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.domain.Company;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ public class CompanyListView implements View{
     @Autowired
     private GetCompanyListService service;
 
-//    public CompanyListView(CompanyDaoInterface database) {
+//    public CompanyListView(CompanyDao database) {
 //        this.service = new GetCompanyListService(database);
 //    }
 

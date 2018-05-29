@@ -1,8 +1,11 @@
 package lv.javaguru.java2.businesslogic.contract.removecontract;
 
-import lv.javaguru.java2.dao.ContractDaoInterface;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.dao.AccountDao;
+import lv.javaguru.java2.dao.ContractDao;
+import lv.javaguru.java2.domain.Account;
+import lv.javaguru.java2.domain.Contract;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,16 +15,16 @@ import java.util.Optional;
 @Component
 public class RemoveContractValidator {
 
-    private ContractDaoInterface contractDaoImpl;
+    @Autowired
+    private ContractDao contractDao;
+    @Autowired
+    private AccountDao accountDao;
 
-    public RemoveContractValidator(ContractDaoInterface database) {
-        this.contractDaoImpl = database;
-    }
-
-    public List<Error> validate(Contract contract) {
+    public List<Error> validate(RemoveContractRequest request) {
         List<Error> errors = new ArrayList<>();
-        validateId(contract.getId()).ifPresent(errors::add);
-        validateIsExistContractById(contract.getId()).ifPresent(errors::add);
+        validateId(request.getId()).ifPresent(errors::add);
+        validateIsExistContractById(request.getId()).ifPresent(errors::add);
+        validateIsExistAnyAccountByContractId(request.getId()).ifPresent(errors::add);
         return errors;
     }
 
@@ -35,7 +38,7 @@ public class RemoveContractValidator {
 
     private Optional<Error> validateIsExistContractById(Integer id) {
         if (id != null) {
-            Optional<Contract> foundContract = contractDaoImpl.getContractById(id);
+            Optional<Contract> foundContract = contractDao.getContractById(id);
             if (!foundContract.isPresent()) {
                 return Optional.of(new Error("id", "Contract by id not exist"));
             }
@@ -43,4 +46,13 @@ public class RemoveContractValidator {
         return Optional.empty();
     }
 
+    private Optional<Error> validateIsExistAnyAccountByContractId(Integer id) {
+        if (id != null) {
+            List<Account> accounts = accountDao.getAccountListByContractId(id);
+            if (accounts.size() != 0) {
+                return Optional.of(new Error("id", "There are also accounts with this contract"));
+            }
+        }
+        return Optional.empty();
+    }
 }

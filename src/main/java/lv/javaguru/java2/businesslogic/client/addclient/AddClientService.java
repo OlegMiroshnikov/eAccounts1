@@ -1,42 +1,41 @@
 package lv.javaguru.java2.businesslogic.client.addclient;
 
-import lv.javaguru.java2.dao.ClientDaoInterface;
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.dao.ClientDao;
+import lv.javaguru.java2.domain.Client;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static lv.javaguru.java2.domain.builders.ClientBuilder.createClient;
 
 @Component
 public class AddClientService {
 
-    private ClientDaoInterface clientDaoImpl;
+    @Autowired
+    private ClientDao clientDao;
+    @Autowired
     private AddClientValidator addClientValidator;
 
-//    public AddClientService(ClientDaoInterface database, AddClientValidator addClientValidator) {
-//        this.clientDaoImpl = database;
-//        this.addClientValidator = addClientValidator;
-//    }
 
-    public AddClientResponse addClient(Client client) {
-        List<Error> errors = addClientValidator.validate(client);
+    @Transactional
+    public AddClientResponse addClient(AddClientRequest request) {
+        List<Error> errors = addClientValidator.validate(request);
         if (!errors.isEmpty()) {
-            return new AddClientResponse(false, errors);
+            return new AddClientResponse(errors);
         }
-        clientDaoImpl.addClient(client);
-        return new AddClientResponse(true, null);
+        Client client = createClient()
+                .withPersonalCode(request.getPersonalCode())
+                .withName(request.getName())
+                .withAddress(request.getAddress())
+                .withEMail(request.getEMail())
+                .build();
+
+        clientDao.addClient(client);
+        return new AddClientResponse(client.getId());
     }
 
-//    public Optional<Client> getClientById(Integer id) {
-//        return clientDaoImpl.getClientById(id);
-//    }
-//
-//    public Optional<Client> getClientByPersonalCode(String personalCode) {
-//        return clientDaoImpl.getClientByPersonalCode(personalCode);
-//    }
-//
-//    public void updateClient(Client client) {
-//        clientDaoImpl.updateClient(client);
-//    }
-
 }
+

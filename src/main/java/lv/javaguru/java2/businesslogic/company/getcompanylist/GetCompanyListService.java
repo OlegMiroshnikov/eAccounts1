@@ -1,21 +1,21 @@
 package lv.javaguru.java2.businesslogic.company.getcompanylist;
 
-import lv.javaguru.java2.dao.CompanyDaoInterface;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.dao.CompanyDao;
+import lv.javaguru.java2.domain.Company;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class GetCompanyListService {
 
-    private CompanyDaoInterface companyDaoImpl;
+    @Autowired
+    private CompanyDao companyDao;
 
-    public GetCompanyListService(CompanyDaoInterface database) {
-        this.companyDaoImpl = database;
-    }
-
+    @Transactional
     public List<Company> getCompanyList() {
-        return companyDaoImpl.getCompanyList();
+        return companyDao.getCompanyList();
     }
 }

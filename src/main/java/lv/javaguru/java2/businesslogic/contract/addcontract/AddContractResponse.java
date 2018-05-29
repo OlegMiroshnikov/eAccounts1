@@ -5,12 +5,23 @@ import lv.javaguru.java2.validators.Error;
 import java.util.List;
 
 public class AddContractResponse {
+
+    private Integer id;
     private boolean success;
     private List<Error> errors;
 
-    public AddContractResponse(boolean success, List<Error> errors) {
+    public AddContractResponse(Integer id, boolean success, List<Error> errors) {
+        this.id = id;
         this.success = success;
         this.errors = errors;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public boolean isSuccess() {

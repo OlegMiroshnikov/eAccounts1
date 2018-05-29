@@ -1,8 +1,9 @@
 package lv.javaguru.java2.views.account;
 
+import lv.javaguru.java2.businesslogic.account.removeaccount.RemoveAccountRequest;
 import lv.javaguru.java2.businesslogic.account.removeaccount.RemoveAccountResponse;
 import lv.javaguru.java2.businesslogic.account.removeaccount.RemoveAccountService;
-import lv.javaguru.java2.domens.Account;
+import lv.javaguru.java2.domain.Account;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class RemoveAccountView implements View {
     @Autowired
     private RemoveAccountService removeAccountService;
 
-//    public RemoveAccountView(AccountDaoInterface database) {
+//    public RemoveAccountView(AccountDao database) {
 //        RemoveAccountValidator removeAccountValidator = new RemoveAccountValidator(database);
 //        this.removeAccountService = new RemoveAccountService(database, removeAccountValidator);
 //    }
@@ -27,9 +28,9 @@ public class RemoveAccountView implements View {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter account Id:");
         Long id = Long.parseLong(sc.nextLine());
-        Account account = new Account();
-        account.setId(id);
-        RemoveAccountResponse response = removeAccountService.removeAccount(account);
+
+        RemoveAccountRequest request = new RemoveAccountRequest(id);
+        RemoveAccountResponse response = removeAccountService.removeAccount(request);
         if (response.isSuccess()) {
             System.out.println("account successfully removed from list!");
             System.out.println();

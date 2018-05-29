@@ -1,7 +1,7 @@
 package lv.javaguru.java2.views.client;
 
 import lv.javaguru.java2.businesslogic.client.getclientlist.GetClientListService;
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.domain.Client;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,10 +11,6 @@ public class ClientsListView implements View {
 
     @Autowired
     private GetClientListService service;
-
-//    public ClientsListView(ClientDaoInterface database) {
-//        this.service = new GetClientListService(database);
-//    }
 
     @Override
     public void execute() {

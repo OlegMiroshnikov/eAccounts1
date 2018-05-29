@@ -1,29 +1,31 @@
 package lv.javaguru.java2.businesslogic.client.removeclient;
 
-import lv.javaguru.java2.dao.ClientDaoInterface;
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.dao.ClientDao;
+import lv.javaguru.java2.domain.Client;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static lv.javaguru.java2.domain.builders.ClientBuilder.createClient;
 
 @Component
 public class RemoveClientService {
 
-    private ClientDaoInterface clientDaoImpl;
+    @Autowired
+    private ClientDao clientDao;
+    @Autowired
     private RemoveClientValidator removeClientValidator;
 
-    public RemoveClientService(ClientDaoInterface database, RemoveClientValidator removeClientValidator) {
-        this.clientDaoImpl = database;
-        this.removeClientValidator = removeClientValidator;
-    }
-
-    public RemoveClientResponse removeClient(Client client) {
-        List<Error> errors = removeClientValidator.validate(client);
+    @Transactional
+    public RemoveClientResponse removeClient(RemoveClientRequest request) {
+        List<Error> errors = removeClientValidator.validate(request);
         if (!errors.isEmpty()) {
             return new RemoveClientResponse(false, errors);
         }
-        clientDaoImpl.removeClient(client);
+        clientDao.removeClient(request.getId());
         return new RemoveClientResponse(true, null);
     }
 }

@@ -1,8 +1,9 @@
 package lv.javaguru.java2.views.contract;
 
+import lv.javaguru.java2.businesslogic.contract.removecontract.RemoveContractRequest;
 import lv.javaguru.java2.businesslogic.contract.removecontract.RemoveContractResponse;
 import lv.javaguru.java2.businesslogic.contract.removecontract.RemoveContractService;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.domain.Contract;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ public class RemoveContractView implements View {
     @Autowired
     private RemoveContractService removeContractService;
 
-//    public RemoveContractView(ContractDaoInterface database) {
+//    public RemoveContractView(ContractDao database) {
 //        RemoveContractValidator removeContractValidator = new RemoveContractValidator(database);
 //        this.removeContractService = new RemoveContractService(database, removeContractValidator);
 //    }
@@ -27,9 +28,9 @@ public class RemoveContractView implements View {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter contract Id:");
         Integer id = Integer.parseInt(sc.nextLine());
-        Contract contract = new Contract();
-        contract.setId(id);
-        RemoveContractResponse response = removeContractService.removeContract(contract);
+
+        RemoveContractRequest request = new RemoveContractRequest(id);
+        RemoveContractResponse response = removeContractService.removeContract(request);
         if (response.isSuccess()) {
             System.out.println("Contract successfully removed from list!");
             System.out.println();

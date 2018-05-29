@@ -1,38 +1,44 @@
 package lv.javaguru.java2.businesslogic.client.removeclient;
 
-import lv.javaguru.java2.dao.ClientDaoInterface;
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.dao.ClientDao;
 import lv.javaguru.java2.validators.Error;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RemoveClientServiceTest {
 
-    private ClientDaoInterface database;
+    @Mock
+    private ClientDao clientDao;
+
+    @Mock
     private RemoveClientValidator validator;
+    @InjectMocks
     private RemoveClientService service;
-    private Client client;
+
+    private RemoveClientRequest request;
 
     @Before
     public void init() {
-        database = Mockito.mock(ClientDaoInterface.class);
-        validator = Mockito.mock(RemoveClientValidator.class);
-        service = new RemoveClientService(database, validator);
-        client = new Client(1, "personalCode", "name", "address", "eMail");
+        request = new RemoveClientRequest(1);
     }
 
     @Test
     public void removeClient_noErrors_success() {
         List<Error> errors = new ArrayList<>();
-        Mockito.when(validator.validate(client))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveClientResponse response = service.removeClient(client);
+        RemoveClientResponse response = service.removeClient(request);
         assertTrue(response.isSuccess());
         assertEquals(response.getErrors(), null);
     }
@@ -41,9 +47,9 @@ public class RemoveClientServiceTest {
     public void removeClient_areErrors_fail() {
         List<Error> errors = new ArrayList<>();
         errors.add(new Error("id", "Must not be null"));
-        Mockito.when(validator.validate(client))
+        Mockito.when(validator.validate(request))
                 .thenReturn(errors);
-        RemoveClientResponse response = service.removeClient(client);
+        RemoveClientResponse response = service.removeClient(request);
         assertFalse(response.isSuccess());
         assertEquals(response.getErrors(), errors);
     }

@@ -1,22 +1,22 @@
 package lv.javaguru.java2.businesslogic.contract.getcontractlist;
 
-import lv.javaguru.java2.dao.ContractDaoInterface;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.dao.ContractDao;
+import lv.javaguru.java2.domain.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class GetContractListService {
 
-    private ContractDaoInterface contractDaoImpl;
+    @Autowired
+    private ContractDao contractDao;
 
-    public GetContractListService(ContractDaoInterface database) {
-        this.contractDaoImpl = database;
-    }
-
+    @Transactional
     public List<Contract> getContractList() {
-        return contractDaoImpl.getContractList();
+        return contractDao.getContractList();
     }
 
 }

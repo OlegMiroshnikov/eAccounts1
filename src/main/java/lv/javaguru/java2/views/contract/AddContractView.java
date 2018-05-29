@@ -1,13 +1,18 @@
 package lv.javaguru.java2.views.contract;
 
+import javassist.bytecode.stackmap.BasicBlock;
+import lv.javaguru.java2.businesslogic.contract.addcontract.AddContractRequest;
 import lv.javaguru.java2.businesslogic.contract.addcontract.AddContractResponse;
 import lv.javaguru.java2.businesslogic.contract.addcontract.AddContractService;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.domain.Contract;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
 
 @Component
@@ -15,11 +20,6 @@ public class AddContractView implements View {
 
     @Autowired
     private AddContractService addContractService;
-
-//    public AddContractView(ContractDaoInterface database) {
-//        AddContractValidator validator = new AddContractValidator(database);
-//        this.addContractService = new AddContractService(database, validator);
-//    }
 
     @Override
     public void execute() {
@@ -34,27 +34,28 @@ public class AddContractView implements View {
         String number = sc.nextLine();
         System.out.print("Enter date of signing the contract:");
         String dateSignStr = sc.nextLine();
-        LocalDate dateSign;
-        if (dateSignStr.isEmpty()){
-            dateSign = LocalDate.now();
-        } else {
-            dateSign = LocalDate.parse(dateSignStr);
+        Date dateSign = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+        if (!dateSignStr.isEmpty()){
+            try {
+                dateSign = format.parse(dateSignStr);
+            }catch (ParseException ex) {}
         }
         System.out.print("Enter date of the begin of contract:");
         String dateBeginStr = sc.nextLine();
-        LocalDate dateBegin;
-        if (dateBeginStr.isEmpty()){
-            dateBegin = LocalDate.now();
-        } else {
-            dateBegin = LocalDate.parse(dateBeginStr);
+        Date dateBegin = new Date();
+        if (!dateBeginStr.isEmpty()){
+            try {
+                dateBegin = format.parse(dateBeginStr);
+            }catch (ParseException ex) {}
         }
         System.out.print("Enter date of the end of contract:");
         String dateEndStr = sc.nextLine();
-        LocalDate dateEnd;
-        if (dateEndStr.isEmpty()){
-            dateEnd = LocalDate.now();
-        } else {
-            dateEnd = LocalDate.parse(dateEndStr);
+        Date dateEnd = new Date();
+        if (!dateEndStr.isEmpty()){
+            try {
+                dateEnd = format.parse(dateEndStr);
+            }catch (ParseException ex) {}
         }
         System.out.print("Enter day to sending the account to client:");
         Integer dayToSendAccount = Integer.parseInt(sc.nextLine());
@@ -63,10 +64,10 @@ public class AddContractView implements View {
         System.out.print("Enter status of the contract:");
         Integer status = Integer.parseInt(sc.nextLine());
 
-        Contract contract = new Contract(companyId, clientId, number, dateSign, dateBegin,
+        AddContractRequest request = new AddContractRequest(companyId, clientId, number, dateSign, dateBegin,
                 dateEnd, dayToSendAccount, daysToSendReminder, status);
 
-        AddContractResponse response = addContractService.addContract(contract);
+        AddContractResponse response = addContractService.addContract(request);
         if (response.isSuccess()) {
             System.out.println("Contract successfully added to list!");
             System.out.println();

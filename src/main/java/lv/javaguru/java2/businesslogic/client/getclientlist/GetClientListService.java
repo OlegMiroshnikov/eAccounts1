@@ -1,21 +1,28 @@
 package lv.javaguru.java2.businesslogic.client.getclientlist;
 
-import lv.javaguru.java2.dao.ClientDaoInterface;
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.dao.ClientDao;
+import lv.javaguru.java2.domain.Client;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class GetClientListService {
 
-    private ClientDaoInterface clientDaoImpl;
+    @Autowired
+    private ClientDao clientDao;
 
-    public GetClientListService(ClientDaoInterface database) {
-        this.clientDaoImpl = database;
-    }
-
+    @Transactional
     public List<Client> getClientList() {
-        return clientDaoImpl.getClientList();
+        return clientDao.getClientList();
     }
+
+    @Transactional
+    public Optional<Client> getClientById(Integer id) {
+        return clientDao.getClientById(id);
+    }
+
 }

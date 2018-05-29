@@ -1,129 +1,129 @@
 package lv.javaguru.java2.businesslogic.company.addcompany;
 
-import lv.javaguru.java2.dao.CompanyDaoInterface;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.dao.CompanyDao;
+import lv.javaguru.java2.domain.Company;
 import lv.javaguru.java2.validators.Error;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.List;
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
+import static lv.javaguru.java2.domain.builders.CompanyBuilder.createCompany;
 
+@RunWith(MockitoJUnitRunner.class)
 public class AddCompanyValidatorTest {
 
-    private CompanyDaoInterface database;
+    @Mock
+    private CompanyDao companyDao;
+
+    @InjectMocks
     private AddCompanyValidator validator;
-    private Company company;
+
+    private AddCompanyRequest request;
 
     @Before
     public void init() {
-        database = Mockito.mock(CompanyDaoInterface.class);
-        validator = new AddCompanyValidator(database);
-        company = new Company(1, "regNr", "name", "address", "eMail",
+        request = new AddCompanyRequest("regNr", "name", "address", "eMail",
                 "pathFromAccounts", "pathToAccounts");
-
     }
 
     @Test
     public void validate_companyIsOK_noErrors() {
-        List<Error> errors = validator.validate(company);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 0);
 
     }
     @Test
-    public void validate_regNrIsNullOrEmpty_error() {
-        company.setRegNr(null);
-        List<Error> errors = validator.validate(company);
+    public void validate_regNrIsNullOrEmpty_isError() {
+        request.setRegNr(null);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "regNr");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setRegNr(" ");
-        errors = validator.validate(company);
+        request.setRegNr(" ");
+        errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "regNr");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
     }
 
     @Test
-    public void validate_nameIsNullOrEmpty_error() {
-        company.setName(null);
-        List<Error> errors = validator.validate(company);
+    public void validate_nameIsNullOrEmpty_isError() {
+        request.setName(null);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "name");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setName(" ");
-        errors = validator.validate(company);
+        request.setName(" ");
+        errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "name");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
     }
 
     @Test
-    public void validate_addressIsNullOrEmpty_error() {
-        company.setAddress(null);
-        List<Error> errors = validator.validate(company);
-        assertEquals(errors.size(), 1);
-        assertEquals(errors.get(0).getField(), "address");
-        assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setAddress(" ");
-        errors = validator.validate(company);
-        assertEquals(errors.size(), 1);
-        assertEquals(errors.get(0).getField(), "address");
-        assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-    }
-
-    @Test
-    public void validate_eMailIsNullOrEmpty_error() {
-        company.setEMail(null);
-        List<Error> errors = validator.validate(company);
+    public void validate_eMailIsNullOrEmpty_isError() {
+        request.setEMail(null);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "eMail");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setEMail(" ");
-        errors = validator.validate(company);
+        request.setEMail(" ");
+        errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "eMail");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
     }
 
     @Test
-    public void validate_pathFromAccountsIsNullOrEmpty_error() {
-        company.setPathFromAccounts(null);
-        List<Error> errors = validator.validate(company);
+    public void validate_pathFromAccountsIsNullOrEmpty_isError() {
+        request.setPathFromAccounts(null);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "pathFromAccounts");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setPathFromAccounts(" ");
-        errors = validator.validate(company);
+        request.setPathFromAccounts(" ");
+        errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "pathFromAccounts");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
     }
 
     @Test
-    public void validate_pathToAccountsIsNullOrEmpty_error() {
-        company.setPathToAccounts(null);
-        List<Error> errors = validator.validate(company);
+    public void validate_pathToAccountsIsNullOrEmpty_isError() {
+        request.setPathToAccounts(null);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "pathToAccounts");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
-        company.setPathToAccounts(" ");
-        errors = validator.validate(company);
+        request.setPathToAccounts(" ");
+        errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "pathToAccounts");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be empty");
     }
 
     @Test
-    public void validate_duplicateRegNr_error() {
-        Company foundCompany = new Company(1, "regNr", "name", "address", "eMail",
-                "pathFromAccounts", "pathToAccounts");
-        Mockito.when(database.getCompanyByRegNr("regNr"))
+    public void validate_duplicateRegNr_isError() {
+        Company foundCompany = createCompany()
+                .withId(1)
+                .withRegNr("regNr")
+                .withName("name")
+                .withAddress("address")
+                .withEMail("eMail")
+                .withPathFromAccounts("pathFromAccounts")
+                .withPathToAccounts("pathToAccounts")
+                .build();
+        Mockito.when(companyDao.getCompanyByRegNr("regNr"))
                 .thenReturn(Optional.of(foundCompany));
-        List<Error> errors = validator.validate(company);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 1);
         assertEquals(errors.get(0).getField(), "regNr");
         assertEquals(errors.get(0).getErrorMessage(), "Must not be repeated");
@@ -131,10 +131,11 @@ public class AddCompanyValidatorTest {
 
     @Test
     public void validate_noDuplicateRegNr_noErrors() {
-        Mockito.when(database.getCompanyByRegNr("regNr"))
+        Mockito.when(companyDao.getCompanyByRegNr("regNr"))
                 .thenReturn(Optional.empty());
-        List<Error> errors = validator.validate(company);
+        List<Error> errors = validator.validate(request);
         assertEquals(errors.size(), 0);
     }
+
 
 }

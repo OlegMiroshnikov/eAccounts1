@@ -1,8 +1,9 @@
 package lv.javaguru.java2.businesslogic.company.addcompany;
 
-import lv.javaguru.java2.dao.CompanyDaoInterface;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.dao.CompanyDao;
+import lv.javaguru.java2.domain.Company;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,21 +13,17 @@ import java.util.Optional;
 @Component
 public class AddCompanyValidator {
 
-    private CompanyDaoInterface companyDaoImpl;
+    @Autowired
+    private CompanyDao companyDao;
 
-    public AddCompanyValidator(CompanyDaoInterface database) {
-        this.companyDaoImpl = database;
-    }
-
-    public List<Error> validate(Company company) {
+    public List<Error> validate(AddCompanyRequest request) {
         List<Error> errors = new ArrayList<>();
-        validateRegNr(company.getRegNr()).ifPresent(errors::add);
-        validateName(company.getName()).ifPresent(errors::add);
-        validateAddress(company.getAddress()).ifPresent(errors::add);
-        validateEMail(company.getEMail()).ifPresent(errors::add);
-        validatePathFromAccounts(company.getPathFromAccounts()).ifPresent(errors::add);
-        validatePathToAccounts(company.getPathToAccounts()).ifPresent(errors::add);
-        validateDuplicateRegNr(company.getRegNr()).ifPresent(errors::add);
+        validateRegNr(request.getRegNr()).ifPresent(errors::add);
+        validateName(request.getName()).ifPresent(errors::add);
+        validateEMail(request.getEMail()).ifPresent(errors::add);
+        validatePathFromAccounts(request.getPathFromAccounts()).ifPresent(errors::add);
+        validatePathToAccounts(request.getPathToAccounts()).ifPresent(errors::add);
+        validateDuplicateRegNr(request.getRegNr()).ifPresent(errors::add);
         return errors;
     }
 
@@ -41,14 +38,6 @@ public class AddCompanyValidator {
     private Optional<Error> validateName(String name) {
         if (name == null || name.trim().isEmpty()) {
             return Optional.of(new Error("name", "Must not be empty"));
-        } else {
-            return Optional.empty();
-        }
-    }
-
-    private Optional<Error> validateAddress(String address) {
-        if (address == null || address.trim().isEmpty()) {
-            return Optional.of(new Error("address", "Must not be empty"));
         } else {
             return Optional.empty();
         }
@@ -80,7 +69,7 @@ public class AddCompanyValidator {
 
     private Optional<Error> validateDuplicateRegNr(String regNr) {
         if (regNr != null && !regNr.trim().isEmpty()) {
-            Optional<Company> company = companyDaoImpl.getCompanyByRegNr(regNr);
+            Optional<Company> company = companyDao.getCompanyByRegNr(regNr);
             if (company.isPresent()) {
                 return Optional.of(new Error("regNr", "Must not be repeated"));
             }

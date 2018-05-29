@@ -1,8 +1,9 @@
 package lv.javaguru.java2.businesslogic.account.removeaccount;
 
-import lv.javaguru.java2.dao.AccountDaoInterface;
-import lv.javaguru.java2.domens.Account;
+import lv.javaguru.java2.dao.AccountDao;
+import lv.javaguru.java2.domain.Account;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,16 +13,13 @@ import java.util.Optional;
 @Component
 public class RemoveAccountValidator {
 
-    private AccountDaoInterface accountDaoImpl;
+    @Autowired
+    private AccountDao accountDao;
 
-    public RemoveAccountValidator(AccountDaoInterface database) {
-        this.accountDaoImpl = database;
-    }
-
-    public List<Error> validate(Account account) {
+    public List<Error> validate(RemoveAccountRequest request) {
         List<Error> errors = new ArrayList<>();
-        validateId(account.getId()).ifPresent(errors::add);
-        validateIsExistAccountById(account.getId()).ifPresent(errors::add);
+        validateId(request.getId()).ifPresent(errors::add);
+        validateIsExistAccountById(request.getId()).ifPresent(errors::add);
         return errors;
     }
 
@@ -35,7 +33,7 @@ public class RemoveAccountValidator {
 
     private Optional<Error> validateIsExistAccountById(Long id) {
         if (id != null) {
-            Optional<Account> foundAccount = accountDaoImpl.getAccountById(id);
+            Optional<Account> foundAccount = accountDao.getAccountById(id);
             if (!foundAccount.isPresent()) {
                 return Optional.of(new Error("id", "Account by id not exist"));
             }

@@ -1,6 +1,6 @@
 package lv.javaguru.java2.views.client;
 
-import lv.javaguru.java2.domens.Client;
+import lv.javaguru.java2.businesslogic.client.addclient.AddClientRequest;
 import lv.javaguru.java2.businesslogic.client.addclient.AddClientService;
 import lv.javaguru.java2.businesslogic.client.addclient.AddClientResponse;
 import lv.javaguru.java2.views.View;
@@ -10,15 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.Scanner;
 
 @Component
-public class AddClientView  implements View {
+public class AddClientView implements View {
 
     @Autowired
     private AddClientService addClientService;
-
-//    public AddClientView(ClientDaoInterface database) {
-//        AddClientValidator addClientValidator = new AddClientValidator(database);
-//        this.addClientService = new AddClientService(database, addClientValidator);
-//    }
 
     @Override
     public void execute() {
@@ -33,9 +28,9 @@ public class AddClientView  implements View {
         String address = sc.nextLine();
         System.out.print("Enter client eMail:");
         String eMail = sc.nextLine();
-        Client client = new Client(personalCode, name,address, eMail);
+        AddClientRequest request = new AddClientRequest(personalCode, name, address, eMail);
 
-        AddClientResponse response = addClientService.addClient(client);
+        AddClientResponse response = addClientService.addClient(request);
         if (response.isSuccess()) {
             System.out.println("Client successfully added to list!");
             System.out.println();

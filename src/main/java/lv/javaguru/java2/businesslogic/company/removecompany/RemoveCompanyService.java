@@ -1,29 +1,31 @@
 package lv.javaguru.java2.businesslogic.company.removecompany;
 
-import lv.javaguru.java2.dao.CompanyDaoInterface;
-import lv.javaguru.java2.domens.Company;
+import lv.javaguru.java2.dao.CompanyDao;
+import lv.javaguru.java2.domain.Company;
 import lv.javaguru.java2.validators.Error;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+import static lv.javaguru.java2.domain.builders.CompanyBuilder.createCompany;
 
 @Component
 public class RemoveCompanyService {
 
-    private CompanyDaoInterface companyDaoImpl;
+    @Autowired
+    private CompanyDao companyDao;
+    @Autowired
     private RemoveCompanyValidator removeCompanyValidator;
 
-    public RemoveCompanyService(CompanyDaoInterface database, RemoveCompanyValidator removeCompanyValidator) {
-        this.companyDaoImpl = database;
-        this.removeCompanyValidator = removeCompanyValidator;
-    }
-
-    public RemoveCompanyResponse removeCompany(Company company) {
-        List<Error> errors = removeCompanyValidator.validate(company);
+    @Transactional
+    public RemoveCompanyResponse removeCompany(RemoveCompanyRequest request) {
+        List<Error> errors = removeCompanyValidator.validate(request);
         if (!errors.isEmpty()) {
             return new RemoveCompanyResponse(false, errors);
         }
-        companyDaoImpl.removeCompany(company);
+        companyDao.removeCompany(request.getId());
         return new RemoveCompanyResponse(true, null);
     }
 }

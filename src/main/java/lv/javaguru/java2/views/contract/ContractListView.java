@@ -1,7 +1,7 @@
 package lv.javaguru.java2.views.contract;
 
 import lv.javaguru.java2.businesslogic.contract.getcontractlist.GetContractListService;
-import lv.javaguru.java2.domens.Contract;
+import lv.javaguru.java2.domain.Contract;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ public class ContractListView implements View{
     @Autowired
     private GetContractListService service;
 
-//    public ContractListView(ContractDaoInterface database) {
+//    public ContractListView(ContractDao database) {
 //        this.service = new GetContractListService(database);
 //    }
 

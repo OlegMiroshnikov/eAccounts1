@@ -1,8 +1,8 @@
 package lv.javaguru.java2.views.company;
 
+import lv.javaguru.java2.businesslogic.company.addcompany.AddCompanyRequest;
 import lv.javaguru.java2.businesslogic.company.addcompany.AddCompanyResponse;
 import lv.javaguru.java2.businesslogic.company.addcompany.AddCompanyService;
-import lv.javaguru.java2.domens.Company;
 import lv.javaguru.java2.views.View;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,6 @@ public class AddCompanyView implements View{
 
     @Autowired
     private AddCompanyService addCompanyService;
-
-//    public AddCompanyView(CompanyDaoInterface database) {
-//        AddCompanyValidator validator = new AddCompanyValidator(database);
-//        this.addCompanyService = new AddCompanyService(database, validator);
-//    }
 
     @Override
     public void execute() {
@@ -38,9 +33,8 @@ public class AddCompanyView implements View{
         System.out.print("Enter path to which company accounts are exported:");
         String pathToAccounts = sc.nextLine();
 
-        Company company = new Company(regNr, name,address, eMail, pathFromAccounts, pathToAccounts);
-
-        AddCompanyResponse response = addCompanyService.addCompany(company);
+        AddCompanyRequest request = new AddCompanyRequest(regNr, name,address, eMail, pathFromAccounts, pathToAccounts);
+        AddCompanyResponse response = addCompanyService.addCompany(request);
         if (response.isSuccess()) {
             System.out.println("Company successfully added to list!");
             System.out.println();

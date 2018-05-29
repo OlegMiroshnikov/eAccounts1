@@ -5,12 +5,28 @@ import lv.javaguru.java2.validators.Error;
 import java.util.List;
 
 public class AddCompanyResponse {
+
+    private Integer id;
     private boolean success;
     private List<Error> errors;
 
-    public AddCompanyResponse(boolean success, List<Error> errors) {
-        this.success = success;
+    public AddCompanyResponse(Integer id) {
+        this.id = id;
+        this.success = true;
+        this.errors = null;
+    }
+    public AddCompanyResponse(List<Error> errors) {
+        this.id = null;
+        this.success = false;
         this.errors = errors;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public boolean isSuccess() {
